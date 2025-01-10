@@ -1,73 +1,77 @@
 #include "sort.h"
-#include <stdio.h>
 
 /**
- * lomuto_partition - Esquema de partición Lomuto para Quick Sort.
- * @array: Arreglo de enteros a ordenar.
- * @low: Índice inicial de la partición.
- * @high: Índice final de la partición.
- * @size: Tamaño del arreglo (se usa para imprimir).
- *
- * Return: Índice del pivote.
+ * swap - Swaps two elements in an array.
+ * @a: The first element.
+ * @b: The second element.
  */
-int lomuto_partition(int *array, int low, int high, size_t size)
+void swap(int *a, int *b)
 {
-	int pivot, i, j, temp;
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
 
-	pivot = array[high];  /* El pivote es el último elemento */
-	i = low - 1;          /* Índice para el elemento más pequeño */
+/**
+ * partition - Partitions the array using the Lomuto partition scheme.
+ * @array: The array to be partitioned.
+ * @low: The starting index of the partition.
+ * @high: The ending index of the partition.
+ * @size: The size of the array.
+ * Return: The index of the pivot.
+ */
+int partition(int *array, int low, int high, size_t size)
+{
+	int pivot = array[high];
+	int i = low - 1, j;
 
 	for (j = low; j < high; j++)
 	{
 		if (array[j] < pivot)
 		{
 			i++;
-			/* Intercambio de elementos */
-			temp = array[i];
-			array[i] = array[j];
-			array[j] = temp;
-			print_array(array, size);  /* Imprimir después de cada intercambio */
+			if (i != j)
+			{
+				swap(&array[i], &array[j]);
+				print_array(array, size);
+			}
 		}
 	}
-
-	/* Intercambio el pivote con el elemento en la posición i + 1 */
-	temp = array[i + 1];
-	array[i + 1] = array[high];
-	array[high] = temp;
-	print_array(array, size);  /* Imprimir después de pivote en su posición */
-
-	return (i + 1);  /* Devolver la posición del pivote */
+	if (array[high] < array[i + 1])
+	{
+		swap(&array[i + 1], &array[high]);
+		print_array(array, size);
+	}
+	return (i + 1);
 }
 
 /**
- * quick_sort_rec - Función recursiva ordenar arreglo usando Quick Sort.
- * @array: Arreglo de enteros a ordenar.
- * @low: Índice inicial de la partición.
- * @high: Índice final de la partición.
- * @size: Tamaño del arreglo (se usa para imprimir).
+ * quick_sort_rec - Recursively applies the Quick Sort algorithm.
+ * @array: The array to be sorted.
+ * @low: The starting index of the partition.
+ * @high: The ending index of the partition.
+ * @size: The size of the array.
  */
 void quick_sort_rec(int *array, int low, int high, size_t size)
 {
 	if (low < high)
 	{
-		int pi = lomuto_partition(array, low, high, size); /* Índice del pivote */
+		int pi = partition(array, low, high, size);
 
-		quick_sort_rec(array, low, pi - 1, size); /*Ordenar la parte izqui*/
-		quick_sort_rec(array, pi + 1, high, size); /* Ordenar la parte derecha */
+		quick_sort_rec(array, low, pi - 1, size);
+		quick_sort_rec(array, pi + 1, high, size);
 	}
 }
 
 /**
- * quick_sort - Ordena un arreglo usando el algoritmo Quick Sort.
- * @array: Arreglo de enteros a ordenar.
- * @size: Tamaño del arreglo.
- *
- * Descripción: Ordena arreglo en orden ascendente en  partición de Lomuto.
+ * quick_sort - Sorts array of ints in ascending order using Quick Sort.
+ * @array: The array to be sorted.
+ * @size: The size of the array.
  */
 void quick_sort(int *array, size_t size)
 {
 	if (array == NULL || size < 2)
 		return;
 
-	quick_sort_rec(array, 0, size - 1, size); /*Llamada a la función recursiva*/
+	quick_sort_rec(array, 0, size - 1, size);
 }
